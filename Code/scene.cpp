@@ -179,7 +179,7 @@ void Scene::render(Image &img) {
     //printf("%f %f %f\n", gaze.x, gaze.y, gaze.z);
     
     H_FOV = right * ((camera.getViewWidth() * pixel_size) / 2);
-    V_FOV = up * ((camera.getViewHeight() * pixel_size) / 2);
+    V_FOV = up.normalized() * ((camera.getViewHeight() * pixel_size) / 2);
     printf("%f %f %f\n", H_FOV.x, H_FOV.y, H_FOV.z);
     printf("%f %f %f\n", V_FOV.x, V_FOV.y, V_FOV.z);
     // compute the number of rays we trace per pixel

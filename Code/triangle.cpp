@@ -9,6 +9,7 @@
 #include <iostream>
 #include <math.h>
 
+#define EPSILON 0.000001
 /************************** Sphere **********************************/
 
 Hit Triangle::intersect(const Ray &ray)
@@ -28,6 +29,103 @@ Hit Triangle::intersect(const Ray &ray)
     * Otherwise, return true and place the distance of the
     * intersection point from the ray origin in *t (see example).
     ****************************************************/
+
+    Vector e1, e2;
+    Vector P, Q, T;
+
+    e1 = p2 - p1;
+    e2 = p3 - p2;
+
+    Vector N = e2.cross(e1).normalized();
+
+    double v, w, t;
+
+    // compute the distance from the viewpoint to the point that we know lies on the plane
+    v = (p1-ray.O).dot(N);
+    // project the direction vector onto normal
+    w = ray.D.dot(N);
+    
+    if(w == 0) {
+        // ray is parallel to plane, so they never intersect
+        return Hit::NO_HIT();
+    }
+
+    t = v/w;
+    if(t < 0) {
+        // intersection with plane is behind eye
+        return Hit::NO_HIT();
+    }
+
+    Point h = ray.at(t);
+
+    Vector A1, B1, C1, A2, B2, C2;
+    A1 = (p2 - p1);
+    B1 = (p3 - p2);
+    C1 = (p1 - p3);
+
+    A2 = (p2 - h);
+    B2 = (p3 - h);
+    C2 = (p1 - h);
+
+    Vector d1,d2,d3;
+
+    d1 = A1.cross(A2);
+    d2 = B1.cross(B2);
+    d3 = C1.cross(C2);
+
+
+    if(d1.dot(N) > 0 && d2.dot(N) > 0 && d3.dot(N) > 0) {
+        return Hit(t, N);
+    } else {
+        return Hit::NO_HIT();
+    }
+    
+    /*
+    Vector A = p1 - ray.O;
+    double t2 = A.dot(ray.D);
+    //printf("%f %f %f\n", N.x, N.y, N.z);
+    printf("%f\n", t2);
+
+    P = e2.cross(ray.D);
+
+    det = e1.dot(P);
+
+
+
+    if(det > -EPSILON && det < EPSILON) {
+        return Hit::NO_HIT();
+    }
+
+    inv_det = 1.0 / det;
+
+    T = ray.O - p1;
+
+    u = T.dot(P) * inv_det;
+
+    if(u < 0.0 || u > 1) {
+        return Hit::NO_HIT();
+    }
+
+    Q = T.cross(e1);
+
+    v = Q.dot(ray.D) * inv_det;
+
+    if(v < 0 || u + v > 1) {
+        return Hit::NO_HIT();
+    }
+
+    double t = e2.dot(Q) * inv_det;
+
+    if(t < EPSILON) {
+        return Hit::NO_HIT();
+    }
+    //printf("%f\n", t);
+    return Hit(t, N.normalized());
+
+
+*/
+
+    /*
     Vector u, v, n, hit, e1, e2, e3, ph1, ph2, ph3, C;
     double nd, d, t;
 
@@ -90,5 +188,5 @@ Hit Triangle::intersect(const Ray &ray)
     }
 
     // ray is on the inner side of all 3 edges of the triangle so we have a hit
-    return Hit(t, -n.normalized());
+    return Hit(t, -n.normalized());*/
 }
