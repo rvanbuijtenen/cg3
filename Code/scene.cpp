@@ -174,15 +174,14 @@ void Scene::render(Image &img) {
     // gaze, right and view vectors from eye (camera) to projection plane
     view = (center-eye).normalized();
     right = view.cross(up).normalized();
-    
+
     //view = right.cross(gaze);
     //printf("%f %f %f\n", gaze.x, gaze.y, gaze.z);
-    printf("%f %f %f\n", right.x, right.y, right.z);
-    printf("%f %f %f\n", view.x, view.y, view.z);
     
     H_FOV = right * ((camera.getViewWidth() * pixel_size) / 2);
     V_FOV = up * ((camera.getViewHeight() * pixel_size) / 2);
-
+    printf("%f %f %f\n", H_FOV.x, H_FOV.y, H_FOV.z);
+    printf("%f %f %f\n", V_FOV.x, V_FOV.y, V_FOV.z);
     // compute the number of rays we trace per pixel
     nsamples = antiAlias * antiAlias;
 
@@ -197,8 +196,10 @@ void Scene::render(Image &img) {
             w_ratio = ((2.0 * x) / w) - 1;
             h_ratio = ((2.0 * (h-1-y)) / h) - 1;
 
+            Vector H_F = H_FOV * w_ratio;
+            Vector V_F = V_FOV * h_ratio;
             // translate the pixel from center point to pixel position in world space
-            Point pixel =  (center + Vector(0.5, 0.5, 0.0)) + (H_FOV * w_ratio) + (V_FOV * h_ratio);
+            Point pixel =  (center + Vector(0.5, 0.5, 0.0));
             
             // create antiAlias * antiAlias rays for each pixel
             for(i = 1; i <= antiAlias; i++) {
@@ -216,7 +217,9 @@ void Scene::render(Image &img) {
                     displ = Vector(x_displ, -y_displ, 0.0);
 
                     // compute the view direction for the adjusted supersampled rays
-                    dir = ((pixel + displ) - eye).normalized();
+                    Point pix = pixel + displ;
+                    pix = pix + H_F + V_F;
+                    dir = ((pix + displ) - eye).normalized();
                     
                     // create the ray and trace it using the appropriate algorithm. 
                     // Divide the result by number of samples (antiAlias^2) to average the color.
