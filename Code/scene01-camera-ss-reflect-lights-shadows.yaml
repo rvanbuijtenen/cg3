@@ -13,10 +13,10 @@
 #  it should be clear that the #-character can be used to insert comments.
 
 Camera:
-    eye: [1000,200,200]
-    center: [200,200,0]
-    up: [0,1,0]
-    viewSize: [1200,400]
+    eye: [1000,200,1000]
+    center: [200,250,200]
+    up: [0,0.5,0]
+    viewSize: [1200,600]
 
 RenderMode: phong
 Shadows: true
@@ -31,6 +31,16 @@ Lights:
   color: [0.8,0.8,0.4]
 
 Objects:
+- type: triangle
+  p1: [110,130,200]
+  p2: [210,270,300]
+  p3: [140,220,400]
+  material: # blue
+    color: [0.0,0.0,1.0]
+    ka: 0.2
+    kd: 0.7
+    ks: 0
+    n: 1
 - type: sphere
   position: [90,320,100]
   radius: 50
@@ -40,6 +50,15 @@ Objects:
     kd: 0.7
     ks: 0.5
     n: 64
+- type: plane
+  position: [0,0,0]
+  normal: [0,0,-1]
+  material: # blue
+    color: [0.5,0.5,0.5]
+    ka: 0.2
+    kd: 0.7
+    ks: 0
+    n: 1
 - type: sphere
   position: [210,270,300]
   radius: 50
@@ -76,12 +95,3 @@ Objects:
     kd: 0.8
     ks: 0.5
     n: 32
-- type: sphere
-  position: [200,200,-1000]
-  radius: 1000
-  material: # grey
-    color: [0.4,0.4,0.4]
-    ka: 0.2
-    kd: 0.8
-    ks: 0
-    n: 1
