@@ -2,4 +2,5 @@ Code/*.o
 Code/ray
 Code/*.yaml
 Code/*.png
+Code/yaml/*.o
 
