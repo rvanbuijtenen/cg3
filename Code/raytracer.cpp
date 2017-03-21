@@ -54,6 +54,8 @@ int Raytracer::parseRenderMode(const YAML::Node* node)
         return 1;
     } else if (node[0] == "normal") {
         return 2;
+    } else if (node[0] == "gooch") {
+        return 3;
     }
 
     return 0;
