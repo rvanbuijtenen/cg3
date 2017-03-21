@@ -24,7 +24,7 @@
 int Scene::shadow(const Ray &ray) {
     for (unsigned int i = 0; i < objects.size(); ++i) {
         Hit hit(objects[i]->intersect(ray));
-        if (hit.t >= 0) {
+        if (hit.t > 0 && ray.D.dot(hit.N) > 0) {
             // ray intersects an object, so we should render a shadow
             return i;
         }
@@ -33,8 +33,28 @@ int Scene::shadow(const Ray &ray) {
     return -1;
 }
 
+Color Scene::traceGooch(const Ray &ray, int num_reflects) {
+    Hit min_hit(std::numeric_limits<double>::infinity(),Vector());
+    Object *obj = NULL;
+    int min_hit_idx = -1;
+    for (unsigned int i = 0; i < objects.size(); ++i) {
+        Hit hit(objects[i]->intersect(ray));
+        if (hit.t<min_hit.t) {
+            min_hit = hit;
+            obj = objects[i];
+            min_hit_idx = i;
+        }
+    }
 
+    // No hit? Return background color.
+    if (!obj) return Color(0.0, 0.0, 0.0);
 
+    double t_offset = 0.000001;
+    Material *material = obj->material;            //the hit objects material
+    Point hit = ray.at(min_hit.t - t_offset);                 //the hit point
+    Vector N = min_hit.N;                          //the normal at hit point
+    Vector V = -ray.D;
+}
 
 Color Scene::tracePhong(const Ray &ray, int num_reflects)
 {
@@ -180,8 +200,9 @@ void Scene::render(Image &img) {
     //view = right.cross(gaze);
     //printf("%f %f %f\n", gaze.x, gaze.y, gaze.z);
     
+
     H_FOV = right * ((camera.getViewWidth() * pixel_size) / 2);
-    V_FOV = up * ((camera.getViewHeight() * pixel_size) / 2);
+    V_FOV = up.normalized() * ((camera.getViewHeight() * pixel_size) / 2);
     printf("%f %f %f\n", H_FOV.x, H_FOV.y, H_FOV.z);
     printf("%f %f %f\n", V_FOV.x, V_FOV.y, V_FOV.z);
     // compute the number of rays we trace per pixel
@@ -233,6 +254,7 @@ void Scene::render(Image &img) {
                             break;
                         case 2: color += traceNormal(ray)/nsamples;
                             break;
+                        case 3: color += traceGooch(ray, recursionDepth)/nsamples;
                     }
                 }
             }
