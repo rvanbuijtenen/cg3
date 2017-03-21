@@ -18,11 +18,11 @@
 #include "sphere.h"
 #include "material.h"
 #include "light.h"
-#include "image.h"
 #include "yaml/yaml.h"
 #include <ctype.h>
 #include <fstream>
 #include <assert.h>
+#include "image.h"
 
 
 // Functions to ease reading from YAML input
@@ -116,6 +116,12 @@ Material* Raytracer::parseMaterial(const YAML::Node& node)
     node["kd"] >> m->kd;
     node["ks"] >> m->ks;
     node["n"] >> m->n;
+    if (node.FindValue("texture")) {
+        std::string buf; 
+        node["texture"] >> buf;
+        m->texture = new Image(buf.c_str());
+    }
+
     return m;
 }
 

@@ -5,6 +5,7 @@
 
 #include "triangle.h"
 #include "plane.h"
+#include "material.h"
 #include <stdio.h>
 #include <iostream>
 #include <math.h>
@@ -91,4 +92,9 @@ Hit Triangle::intersect(const Ray &ray)
 
     // ray is on the inner side of all 3 edges of the triangle so we have a hit
     return Hit(t, -n.normalized());
+}
+
+Color Triangle::getTextureColor(const Vector N)
+{
+    return material->color;
 }
