@@ -40,7 +40,6 @@ public:
     Color traceAntiAlias(Point eye, Point pixel);
     Color traceGooch(const Ray &ray, int num_reflects);
     Color tracePhong(const Ray &ray, int num_reflects);
-    Color traceGooch(const Ray &ray, int num_reflects); 
     Color traceZBuffer(const Ray &ray, Point pixel);
     Color traceNormal(const Ray &ray);
     Color reflect(int num_reflects, const Ray &ray);
