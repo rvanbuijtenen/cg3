@@ -138,16 +138,17 @@ Object* Raytracer::parseObject(const YAML::Node& node)
     if (objectType == "sphere") {
         Point pos;
         node["position"] >> pos;
-        Vector rot;
-        double r;
+        Vector c;
+        double r, a;
         Sphere* sphere;
         if (node["radius"].size() == 2) {
             node["radius"][0] >> r;
-            node["radius"][1] >> rot;
-            sphere = new Sphere(pos, r, rot);		
+            node["radius"][1] >> c;
+            node["angle"] >> a;
+            sphere = new Sphere(pos, r, c, a);		
         } else {
             node["radius"] >> r;
-            sphere = new Sphere(pos, r, Triple(0, 0, 0));		
+            sphere = new Sphere(pos, r, Triple(0, 0, 0), 0);		
         }
         returnObject = sphere;
     } else if(objectType == "plane") {
