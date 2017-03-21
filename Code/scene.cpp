@@ -22,6 +22,10 @@
  #define MIN(X, Y) (((X) < (Y)) ? (X) : (Y))
         
 int Scene::shadow(const Ray &ray) {
+    if(!shadows) {
+        // shadows disabled, return -1
+        return -1;
+    }
     for (unsigned int i = 0; i < objects.size(); ++i) {
         Hit hit(objects[i]->intersect(ray));
         if (hit.t > 0 && ray.D.dot(hit.N) > 0) {
@@ -50,6 +54,8 @@ Color Scene::traceGooch(const Ray &ray, int num_reflects) {
     // No hit? Return background color.
     if (!obj) return Color(0.0, 0.0, 0.0);
 
+    // we need a small offset to prevent reflecting rays and shadow rays from
+    // intersecting again at the point of intersection    
     double t_offset = 0.000001;
     Material *material = obj->material;            //the hit objects material
     Point hit = ray.at(min_hit.t - t_offset);                 //the hit point
@@ -60,6 +66,7 @@ Color Scene::traceGooch(const Ray &ray, int num_reflects) {
     Vector R, L;
 
     Color I;
+    // background color = black
     I = Color(0,0,0);
 
     for(unsigned int i = 0; i<lights.size(); i++) {
@@ -72,16 +79,17 @@ Color Scene::traceGooch(const Ray &ray, int num_reflects) {
             continue;
         } 
 
+        // gooch cool and warm coefficients
         kd_new = lights[i]->color*material->color*material->kd;
 
         kc = (Color(0,0,b) + alpha * kd_new);
         kw = (Color(y,y,0) + beta * kd_new);
 
-        
-        R = L - (2 * N.dot(L) * N);
-
+        // gooch shading computation from assignment
         I += kc * (1-N.dot(-L))/2 + kw * (1+N.dot(-L))/2;
-        //printf("%f %f %f\n", b, alpha, y);
+        
+        // compute phong specular portion
+        R = L - (2 * N.dot(L) * N);
         if(R.dot(V) < 0) {
             Color spec = pow(R.dot(V), material->n) * lights[i]->color * material->ks;
             I += spec;
@@ -116,6 +124,8 @@ Color Scene::tracePhong(const Ray &ray, int num_reflects)
     // No hit? Return background color.
     if (!obj) return Color(0.0, 0.0, 0.0);
 
+    // we need a small offset to prevent reflecting rays and shadow rays from
+    // intersecting again at the point of intersection
     double t_offset = 0.000001;
     Material *material = obj->material;            //the hit objects material
     Point hit = ray.at(min_hit.t - t_offset);                 //the hit point
@@ -127,9 +137,7 @@ Color Scene::tracePhong(const Ray &ray, int num_reflects)
     Color diffuse, specular;
     Vector L,R;
 
-    // we need a small offset to prevent reflecting rays and shadow rays from
-    // intersecting again at the point of intersection
-    
+
 
     // compute ambient part
     Color matcolor = obj->getTextureColor(N);
@@ -297,6 +305,7 @@ void Scene::render(Image &img) {
                         case 2: color += traceNormal(ray)/nsamples;
                             break;
                         case 3: color += traceGooch(ray, recursionDepth)/nsamples;
+                            break;
                     }
                 }
             }
@@ -377,6 +386,4 @@ void Scene::setGoochParams(double bp, double yp, double alphap, double betap) {
     y = yp;
     alpha = alphap;
     beta = betap;
-
-    printf("finished parsing gooch params %f %f %f %f\n", b, y, alpha, beta);
 }

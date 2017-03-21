@@ -23,6 +23,11 @@
 #include "camera.h"
 #include "yaml/yaml.h"
 
+#define PHONG 0
+#define ZBUFFER 1
+#define NORMAL 2
+#define GOOCH 3
+
 class Raytracer {
 private:
     Scene *scene;

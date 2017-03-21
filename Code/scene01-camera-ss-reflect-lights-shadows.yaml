@@ -18,13 +18,13 @@ Camera:
     up: [0,0.5,0]
     viewSize: [1200,600]
 
-RenderMode: gooch
-GoochParams:
+RenderMode: phong
+GoochParameters:
   b: 0.55
   y: 0.3
   alpha: 0.25
   beta: 0.5
-Shadows: true
+Shadows: false
 MaxRecursionDepth: 4
 SuperSampling:
   factor: 4

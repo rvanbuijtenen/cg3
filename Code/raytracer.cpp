@@ -48,36 +48,42 @@ Triple parseTriple(const YAML::Node& node)
     return t;
 }
 
+// returns an integer representing the reder mode:
+//      0 = PHONG
+//      1 = ZBUFFER
+//      2 = NORMAL
+//      3 = GOOCH
 int Raytracer::parseRenderMode(const YAML::Node* node)
 {
     if(!node || node[0] == "phong") {
-        return 0;
+        return PHONG;
     } else if (node[0] == "zbuffer") {
-        return 1;
+        return ZBUFFER;
     } else if (node[0] == "normal") {
-        return 2;
+        return NORMAL;
     } else if (node[0] == "gooch") {
-        return 3;
+        return GOOCH;
     }
 
     return 0;
 }
 
+// returns true when shadows are enabled. False otherwise
 bool Raytracer::parseShadows(const YAML::Node* node)
 {
     if(node && node[0] == "true") {
-        printf("shadows=true\n");
         return true;
     } else {
-        printf("shadows=false\n");
         return false;
     }
 }
 
+// set the blue, yellow, alpha and beta components for the gooch algorithm
 void Raytracer::parseGoochParams(const YAML::Node& node) {
     scene->setGoochParams(node["b"], node["y"], node["alpha"], node["beta"]);
 }
 
+// parse anti-aliassing(supersample) factor. If no value is given, the default of 1 (no supersampling) is returned.
 int Raytracer::parseAntiAlias(const YAML::Node& node) {
     int factor = 1;
     if(node.FindValue("factor")) {
@@ -86,6 +92,8 @@ int Raytracer::parseAntiAlias(const YAML::Node& node) {
     return factor;
 }
 
+// parse the eye, center, view_width, view_height and up values from the yaml node.
+// this data gets stored within a camera object
 Camera Raytracer::parseCamera(const YAML::Node &node) {
     Point eye = parseTriple(node["eye"]);
     Point center = parseTriple(node["center"]);
@@ -104,6 +112,7 @@ Camera Raytracer::parseCamera(const YAML::Node &node) {
     return cam;
 }
 
+// parse an eye and fill in default values for other camera parameters
 Camera Raytracer::parseEye(const YAML::Node &node) {
     Point eye = parseTriple(node);
 

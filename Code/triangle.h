@@ -1,4 +1,4 @@
-// Author: Remco van Buijtenen
+// Author: Remco van Buijtenen & Jurgen Nijland
 //
 // class defining a triangle based on its 3 corner locations.
 //
