@@ -1,2 +1,5 @@
-*.o
-ray
+Code/*.o
+Code/ray
+Code/*.yaml
+Code/*.png
+
