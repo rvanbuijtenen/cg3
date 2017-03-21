@@ -82,7 +82,7 @@ Objects:
   position: [140,220,400]
   radius: 50
   material: # yellow
-    texture: "earth.png"
+    texture: "earthmap1k.png"
     color: [1.0,0.8,0.0]
     ka: 0.2
     kd: 0.8
