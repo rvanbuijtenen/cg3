@@ -46,6 +46,7 @@ Color Scene::traceGooch(const Ray &ray, int num_reflects) {
         }
     }
 
+
     // No hit? Return background color.
     if (!obj) return Color(0.0, 0.0, 0.0);
 
@@ -54,6 +55,47 @@ Color Scene::traceGooch(const Ray &ray, int num_reflects) {
     Point hit = ray.at(min_hit.t - t_offset);                 //the hit point
     Vector N = min_hit.N;                          //the normal at hit point
     Vector V = -ray.D;
+
+    Color kc, kw, kd_new;
+    Vector R, L;
+
+    Color I;
+    I = Color(0,0,0);
+
+    for(unsigned int i = 0; i<lights.size(); i++) {
+        L = (lights[i]->position - hit).normalized();
+        Ray shadowRay = Ray(hit, (lights[i]->position-hit).normalized());
+        int shadowObjIdx = shadow(shadowRay);
+        if(shadowObjIdx >= 0 && shadowObjIdx != min_hit_idx) {
+            // ray from intersect point to light intersects an object, so this light
+            // does not produce a color value
+            continue;
+        } 
+
+        kd_new = lights[i]->color*material->color*material->kd;
+
+        kc = (Color(0,0,b) + alpha * kd_new);
+        kw = (Color(y,y,0) + beta * kd_new);
+
+        
+        R = L - (2 * N.dot(L) * N);
+
+        I += kc * (1-N.dot(-L))/2 + kw * (1+N.dot(-L))/2;
+        //printf("%f %f %f\n", b, alpha, y);
+        if(R.dot(V) < 0) {
+            Color spec = pow(R.dot(V), material->n) * lights[i]->color * material->ks;
+            I += spec;
+        }
+    }
+
+    // recursively reflect rays and add the resulting color to the total color 
+    if(material->ks > 0 && num_reflects > 1) {
+        R = ray.D - (2 * N * N.dot(ray.D));
+        Ray reflectRay = Ray(hit, R.normalized());
+        I += traceGooch(reflectRay, num_reflects - 1) * material->ks;
+    }
+
+    return I;
 }
 
 Color Scene::tracePhong(const Ray &ray, int num_reflects)
@@ -322,4 +364,17 @@ void Scene::setCamera(Camera c) {
 
 Camera Scene::getCamera() {
     return camera;
+}
+
+int Scene::getRenderMode() {
+    return renderMode;
+}
+
+void Scene::setGoochParams(double bp, double yp, double alphap, double betap) {
+    b = bp;
+    y = yp;
+    alpha = alphap;
+    beta = betap;
+
+    printf("finished parsing gooch params %f %f %f %f\n", b, y, alpha, beta);
 }

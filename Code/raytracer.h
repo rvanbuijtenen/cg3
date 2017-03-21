@@ -31,6 +31,7 @@ private:
     Material* parseMaterial(const YAML::Node& node);
     Object* parseObject(const YAML::Node& node);
     Light* parseLight(const YAML::Node& node);
+    void parseGoochParams(const YAML::Node& node);
     int parseRenderMode(const YAML::Node* node);
     int parseAntiAlias(const YAML::Node& node);
     int parseRecursionDepth(const YAML::Node& node);

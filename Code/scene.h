@@ -35,6 +35,7 @@ private:
     int antiAlias;
     Camera camera;
     int recursionDepth;
+    double b,y,alpha,beta;
 public:
     int shadow(const Ray &ray);
     Color traceAntiAlias(Point eye, Point pixel);
@@ -54,6 +55,8 @@ public:
     void setAntiAlias(int n);
     void setCamera(Camera c);
     void setRecursionDepth(int n);
+    void setGoochParams(double bp, double yp, double alphap, double betap);
+    int getRenderMode();
     unsigned int getNumObjects() { return objects.size(); }
     unsigned int getNumLights() { return lights.size(); }
 };

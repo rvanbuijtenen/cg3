@@ -72,6 +72,10 @@ bool Raytracer::parseShadows(const YAML::Node* node)
     }
 }
 
+void Raytracer::parseGoochParams(const YAML::Node& node) {
+    scene->setGoochParams(node["b"], node["y"], node["alpha"], node["beta"]);
+}
+
 int Raytracer::parseAntiAlias(const YAML::Node& node) {
     int factor = 1;
     if(node.FindValue("factor")) {
@@ -169,6 +173,7 @@ Light* Raytracer::parseLight(const YAML::Node& node)
 int Raytracer::parseRecursionDepth(const YAML::Node& node) {
     int n;
     node >> n;
+
     return n;
 }
 /*
@@ -194,6 +199,10 @@ bool Raytracer::readScene(const std::string& inputFilename)
 
             // Read rendermode, defaults to "normal" if not set
             scene->setRenderMode(parseRenderMode(doc.FindValue("RenderMode")));
+            if(scene->getRenderMode() == 3 && doc.FindValue("GoochParameters")) {
+                // gooch
+                parseGoochParams(doc["GoochParameters"]);
+            }
             scene->setShadows(parseShadows(doc.FindValue("Shadows")));
 
             if(doc.FindValue("SuperSampling")) {
@@ -204,6 +213,8 @@ bool Raytracer::readScene(const std::string& inputFilename)
 
             if(doc.FindValue("MaxRecursionDepth")) {
                 scene->setRecursionDepth(parseRecursionDepth(doc["MaxRecursionDepth"]));
+            } else {
+                scene->setRecursionDepth(1);
             }
             
             
