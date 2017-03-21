@@ -5,6 +5,7 @@
 
 #include "triangle.h"
 #include "plane.h"
+#include "material.h"
 #include <stdio.h>
 #include <iostream>
 #include <math.h>
@@ -79,4 +80,9 @@ Hit Triangle::intersect(const Ray &ray)
     } else {
         return Hit::NO_HIT();
     }
- }
+}
+
+Color Triangle::getTextureColor(const Vector N)
+{
+    return material->color;
+}

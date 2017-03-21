@@ -17,6 +17,8 @@
 #include "sphere.h"
 #include <stdio.h>
 #include <iostream>
+#include "material.h"
+#include "triple.h"
 #include <math.h>
 
 /************************** Sphere **********************************/
@@ -52,4 +54,26 @@ Hit Sphere::intersect(const Ray &ray)
     // Compute surface normal, which when normalized is equal to the radius vector to the point of intersection
     N = (position-ray.at(t)).normalized();
     return Hit(t,N);
+}
+
+Color Sphere::getTextureColor(const Vector N)
+{
+    Color color;
+    if (material->texture != NULL) {
+        double a2 = a * M_PI / 180.0;
+        Triple c2 = r * c;
+        c2.normalize();
+        Vector d = N;
+        double x = d.x*cos(a2) + (1-cos(a2)) * (c2.x*c2.x*d.x + c2.x*c2.y*d.y + c2.x*c2.z*d.z) + (c2.y*d.z - c2.z*d.y) * sin(a2);
+        double y = d.y*cos(a2) + (1-cos(a2)) * (c2.y*c2.x*d.x + c2.y*c2.y*d.y + c2.y*c2.z*d.z) + (c2.z*d.x - c2.x*d.z) * sin(a2);
+        double z = d.z*cos(a2) + (1-cos(a2)) * (c2.z*c2.x*d.x + c2.z*c2.y*d.y + c2.z*c2.z*d.z) + (c2.x*d.y - c2.y*d.x) * sin(a2);
+        d = Triple(x, y, z);
+        
+        double u = 0.5 + atan2(d.y, d.x) / (2*M_PI);
+        double v = 1 - acos(d.z) / M_PI;
+        color = material->texture->colorAt(u, v);
+    } else {
+        color = material->color;
+    }
+    return color;
 }

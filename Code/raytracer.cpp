@@ -18,11 +18,11 @@
 #include "sphere.h"
 #include "material.h"
 #include "light.h"
-#include "image.h"
 #include "yaml/yaml.h"
 #include <ctype.h>
 #include <fstream>
 #include <assert.h>
+#include "image.h"
 
 
 // Functions to ease reading from YAML input
@@ -117,11 +117,19 @@ Camera Raytracer::parseEye(const YAML::Node &node) {
 Material* Raytracer::parseMaterial(const YAML::Node& node)
 {
     Material *m = new Material();
-    node["color"] >> m->color;	
     node["ka"] >> m->ka;
     node["kd"] >> m->kd;
     node["ks"] >> m->ks;
     node["n"] >> m->n;
+    if (node.FindValue("color")) {
+        node["color"] >> m->color;	
+    }
+    if (node.FindValue("texture")) {
+        std::string buf; 
+        node["texture"] >> buf;
+        m->texture = new Image(buf.c_str());
+    }
+
     return m;
 }
 
@@ -134,9 +142,18 @@ Object* Raytracer::parseObject(const YAML::Node& node)
     if (objectType == "sphere") {
         Point pos;
         node["position"] >> pos;
-        double r;
-        node["radius"] >> r;
-        Sphere *sphere = new Sphere(pos,r);		
+        Vector c;
+        double r, a;
+        Sphere* sphere;
+        if (node["radius"].size() == 2) {
+            node["radius"][0] >> r;
+            node["radius"][1] >> c;
+            node["angle"] >> a;
+            sphere = new Sphere(pos, r, c, a);		
+        } else {
+            node["radius"] >> r;
+            sphere = new Sphere(pos, r, Triple(0, 0, 0), 0);		
+        }
         returnObject = sphere;
     } else if(objectType == "plane") {
         Point pos, N;

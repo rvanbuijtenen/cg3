@@ -21,6 +21,8 @@ public:
     Plane(Point position, Point normal) : position(position), normal(normal) { }
 
     virtual Hit intersect(const Ray &ray);
+    virtual Color getTextureColor(const Vector N);
+
 
     const Point position;
     const Point normal;

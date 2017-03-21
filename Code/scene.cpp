@@ -123,6 +123,7 @@ Color Scene::tracePhong(const Ray &ray, int num_reflects)
     Vector V = -ray.D;                             //the view vector
 
 
+
     Color diffuse, specular;
     Vector L,R;
 
@@ -131,7 +132,8 @@ Color Scene::tracePhong(const Ray &ray, int num_reflects)
     
 
     // compute ambient part
-    Color color = material->color * material->ka; 
+    Color matcolor = obj->getTextureColor(N);
+    Color color = matcolor * material->ka;
 
     // loop over each light to compute specular and diffuse parts     
     for(unsigned int i = 0; i<lights.size(); i++) {
@@ -148,7 +150,7 @@ Color Scene::tracePhong(const Ray &ray, int num_reflects)
         }   
 
         // compute diffuse portion of light
-        color += material->color * material->kd * lights[i]->color * MAX(0, N.dot((hit-lights[i]->position).normalized()));
+        color += matcolor * material->kd * lights[i]->color * MAX(0, N.dot((hit-lights[i]->position).normalized()));
 
         // compute specular portion of light
         if(R.dot(V) < 0) {

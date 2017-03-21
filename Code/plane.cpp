@@ -17,6 +17,8 @@
 #include <stdio.h>
 #include <iostream>
 #include <math.h>
+#include "triple.h"
+#include "material.h"
 
 #include "plane.h"
 
@@ -44,4 +46,9 @@ Hit Plane::intersect(const Ray &ray)
 
     // return the time of intersection and the normal used to define the plane 
     return Hit(t,normal);
+}
+
+Color Plane::getTextureColor(const Vector N)
+{
+    return material->color;
 }
