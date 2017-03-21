@@ -26,6 +26,8 @@ Lights:
   color: [0.8,0.8,0.4]
 
 Objects:
+- type: mesh
+  file: models/sphere.obj
 - type: sphere
   position: [90,320,100]
   radius: 50

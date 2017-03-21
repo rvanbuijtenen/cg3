@@ -36,6 +36,7 @@ private:
     int parseAntiAlias(const YAML::Node& node);
     int parseRecursionDepth(const YAML::Node& node);
     bool parseShadows(const YAML::Node* node);
+    void parseMesh(std::string fname);
     Camera parseCamera(const YAML::Node& node);
     Camera parseEye(const YAML::Node& node);
 

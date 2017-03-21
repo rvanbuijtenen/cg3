@@ -22,7 +22,9 @@
 #include <ctype.h>
 #include <fstream>
 #include <assert.h>
+#include <cstring>
 #include "image.h"
+#include "glm.h"  
 
 
 // Functions to ease reading from YAML input
@@ -133,10 +135,18 @@ Material* Raytracer::parseMaterial(const YAML::Node& node)
     return m;
 }
 
+void Raytracer::parseMesh(std::string fname) {
+    char filename[1024];
+    strcpy(filename, fname.c_str());
+    GLMmodel *model = glmReadOBJ(filename);
+    printf("%d", model->numvertices);
+}
+
 Object* Raytracer::parseObject(const YAML::Node& node)
 {
     Object *returnObject = NULL;
     std::string objectType;
+    std::string file;
     node["type"] >> objectType;
 
     if (objectType == "sphere") {
@@ -168,6 +178,21 @@ Object* Raytracer::parseObject(const YAML::Node& node)
         node["p3"] >> p3;
         Triangle *triangle = new Triangle(p1,p2,p3);
         returnObject = triangle;
+    } else if(objectType == "mesh") {
+        /*
+         *
+         * parse and read file. For now we return NULl which produces an error. 
+         * An object consisting of a list of triangles should be returned
+         *
+         */
+        if (node.FindValue("file")) {
+            std::string buf; 
+            node["file"] >> buf;
+            
+            parseMesh(buf);
+        }
+        //parseMesh(filename);
+        returnObject = NULL;
     }
 
     if (returnObject) {
