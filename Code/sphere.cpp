@@ -60,7 +60,7 @@ Color Sphere::getTextureColor(const Vector N)
 {
     Color color;
     if (material->texture != NULL) {
-        Vector d = N * -1.0 * rot;
+        Vector d = N * -1.0;
         double u = 0.5 + atan2(d.z, d.x) / (2*M_PI);
         double v = 0.5 - asin(d.y) / M_PI;
         color = material->texture->colorAt(u, v);
