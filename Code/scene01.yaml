@@ -84,6 +84,7 @@ Objects:
   material: # yellow
     texture: "earthmap1k.png"
     color: [1.0,0.8,0.0]
+    angle: 90
     ka: 0.2
     kd: 0.8
     ks: 0.0
